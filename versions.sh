@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export KEYCLOAK=9.0.0
+export MIDPOINT=4.0.2
 
 export KEYCLOAK_GRPC=0.3.0
 export MIDPOINT_GRPC=0.8.2

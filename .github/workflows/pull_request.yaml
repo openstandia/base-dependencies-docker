@@ -1,23 +1,14 @@
 name: Container CI
 
-on:
-  push:
-    branches:
-      - master
+on: [pull_request]
 
 jobs:
   build:
-    name: Build and release
+    name: Build
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
       - uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
-        if: success()
-        with:
-          login-server: docker.pkg.github.com
-          username: ${GITHUB_ACTOR}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build containers
         if: success()
@@ -28,11 +19,4 @@ jobs:
             | docker build -t docker.pkg.github.com/$GITHUB_REPOSITORY/keycloak-extension-build:${{ github.sha }} -
           tar -C midpoint-extension-build -czh . \
             | docker build -t docker.pkg.github.com/$GITHUB_REPOSITORY/midpoint-extension-build:${{ github.sha }} -
-
-      - name: Push containers
-        if: success()
-        run: |
-          docker push docker.pkg.github.com/$GITHUB_REPOSITORY/keycloak-adapter-app-build:${{ github.sha }}
-          docker push docker.pkg.github.com/$GITHUB_REPOSITORY/keycloak-extension-build:${{ github.sha }}
-          docker push docker.pkg.github.com/$GITHUB_REPOSITORY/midpoint-extension-build:${{ github.sha }}
 
